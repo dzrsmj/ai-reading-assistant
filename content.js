@@ -185,7 +185,6 @@
     if (msg.type === 'SHOW_RESULT') {
       const { text, action, result } = msg.payload;
       hideFloatingBtn();
-      window.getSelection().removeAllRanges();
       showResultCard(action, 'result', result, text);
     }
     if (msg.type === 'SHOW_ERROR') {
