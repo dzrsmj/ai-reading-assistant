@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Privacy Policy - AI Reading Assistant</title>
+  <style>
+    body { max-width: 700px; margin: 40px auto; padding: 0 20px; font-family: -apple-system, BlinkMacSystemFont, sans-serif; line-height: 1.7; color: #333; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 18px; margin-top: 24px; }
+    a { color: #667eea; }
+  </style>
+</head>
+<body>
+  <h1>Privacy Policy for AI Reading Assistant</h1>
+  <p><strong>Last updated:</strong> May 17, 2026</p>
+
+  <h2>What data does this extension collect?</h2>
+  <p><strong>This extension does NOT collect, store, or transmit any personal data to any third-party server.</strong></p>
+  <p>All data stays on your device:</p>
+  <ul>
+    <li><strong>API Key:</strong> Stored locally using Chrome's <code>storage.local</code> API. Never sent anywhere except directly to the AI provider (OpenAI or Anthropic) for authentication.</li>
+    <li><strong>Selected text:</strong> The text you select is sent directly from your browser to the AI provider's API (OpenAI or Anthropic) for processing. It is never sent to any server we control.</li>
+    <li><strong>Usage counter:</strong> A daily count of API calls is stored locally in <code>storage.local</code> for the free usage limit feature. This never leaves your device.</li>
+  </ul>
+
+  <h2>How is data transmitted?</h2>
+  <p>The extension makes API calls directly from your browser to the AI provider you configure (OpenAI at <code>api.openai.com</code> or Anthropic at <code>api.anthropic.com</code>). The only data transmitted is:</p>
+  <ul>
+    <li>Your API key (sent as an HTTP header to authenticate with the AI provider)</li>
+    <li>The text you selected (sent as part of the API request to generate the summary/explanation/translation)</li>
+  </ul>
+  <p>These transmissions are encrypted via HTTPS.</p>
+
+  <h2>Third-party services</h2>
+  <p>The extension uses the following third-party APIs, which have their own privacy policies:</p>
+  <ul>
+    <li>OpenAI API — <a href="https://openai.com/privacy/">Privacy Policy</a></li>
+    <li>Anthropic API — <a href="https://www.anthropic.com/privacy">Privacy Policy</a></li>
+  </ul>
+
+  <h2>Do we track users?</h2>
+  <p><strong>No.</strong> This extension has:</p>
+  <ul>
+    <li>No analytics</li>
+    <li>No cookies</li>
+    <li>No fingerprinting</li>
+    <li>No advertising SDKs</li>
+    <li>No data collection of any kind</li>
+  </ul>
+
+  <h2>Contact</h2>
+  <p>If you have questions, contact: <a href="mailto:mingjiangsun523@gmail.com">mingjiangsun523@gmail.com</a></p>
+</body>
+</html>
