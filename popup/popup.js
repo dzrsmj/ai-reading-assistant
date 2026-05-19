@@ -6,6 +6,7 @@
   const apiKeyInput = $('#apiKey');
   const toggleKeyBtn = $('#toggleKey');
   const languageSel = $('#language');
+  const demoModeChk = $('#demoMode');
   const saveBtn = $('#saveBtn');
   const saveStatus = $('#saveStatus');
   const statusDot = $('#statusDot');
@@ -22,24 +23,30 @@
     providerSel.value = settings.provider || 'openai';
     apiKeyInput.value = settings.apiKey || '';
     languageSel.value = settings.language || 'zh-CN';
+    demoModeChk.checked = settings.demoMode || false;
 
-    updateStatus(!!settings.apiKey);
+    updateStatus(!!settings.apiKey || !!settings.demoMode);
     updateGuide(!!settings.apiKey);
     await updateUsage();
   }
 
   function updateStatus(hasKey) {
+    const demoMode = demoModeChk.checked;
     if (hasKey) {
       statusDot.className = 'status-dot active';
       statusText.textContent = 'API Key 已配置 ✅';
+    } else if (demoMode) {
+      statusDot.className = 'status-dot demo';
+      statusText.textContent = '演示模式（模拟结果）';
     } else {
       statusDot.className = 'status-dot inactive';
-      statusText.textContent = '请配置 API Key';
+      statusText.textContent = '请配置 API Key 或开启演示';
     }
   }
 
   function updateGuide(hasKey) {
-    guideBox.style.display = hasKey ? 'none' : 'block';
+    const demoMode = demoModeChk.checked;
+    guideBox.style.display = (hasKey || demoMode) ? 'none' : 'block';
   }
 
   async function updateUsage() {
@@ -59,18 +66,27 @@
       provider: providerSel.value,
       apiKey: apiKeyInput.value.trim(),
       language: languageSel.value,
+      demoMode: demoModeChk.checked,
     };
 
     await chrome.storage.local.set({ settings });
     saveStatus.textContent = '✅ 设置已保存';
     saveStatus.className = 'save-status';
-    updateStatus(!!settings.apiKey);
+    updateStatus(!!settings.apiKey || !!settings.demoMode);
     updateGuide(!!settings.apiKey);
     updateUsage();
 
     setTimeout(() => {
       saveStatus.textContent = '';
     }, 2000);
+  });
+
+  // --- Toggle demo mode ---
+  demoModeChk.addEventListener('change', () => {
+    const demoMode = demoModeChk.checked;
+    const hasKey = !!apiKeyInput.value.trim();
+    updateStatus(hasKey || demoMode);
+    updateGuide(hasKey);
   });
 
   // --- Toggle key visibility ---

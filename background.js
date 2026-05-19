@@ -56,8 +56,13 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 async function handleAiAction(text, action) {
   const settings = await getSettings();
 
+  if (settings.demoMode) {
+    await fakeDelay(800, 1500);
+    return generateDemoResponse(text, action, settings.language);
+  }
+
   if (!settings.apiKey) {
-    throw new Error('请先点击插件图标设置 API Key（OpenAI 或 Claude）');
+    throw new Error('请先点击插件图标设置 API Key（OpenAI 或 Claude），或开启演示模式体验');
   }
 
   const usageLeft = await checkDailyUsage();
@@ -76,6 +81,31 @@ async function handleAiAction(text, action) {
 
   await incrementUsage();
   return result;
+}
+
+function fakeDelay(minMs, maxMs) {
+  const ms = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function generateDemoResponse(text, action, language) {
+  const lang = language || 'zh-CN';
+  const isChinese = lang === 'zh-CN';
+  const preview = text.slice(0, 60).replace(/\n/g, ' ').trim();
+
+  const responses = {
+    summarize: isChinese
+      ? `📌 **核心要点总结**\n\n基于选中的内容"${preview}${text.length > 60 ? '...' : ''}"，以下是关键信息：\n\n1. **主题概述**：本文讨论了与人工智能相关的重要概念和发展趋势\n2. **关键观点**：AI技术正在从实验室走向日常生活，深刻影响着各个领域\n3. **重要细节**：隐私保护和数据处理成为AI应用的核心关注点\n4. **结论方向**：未来的AI发展将更加注重专业化和实用性\n\n> 💡 这是演示模式生成的示例结果。配置API Key后可获得真实AI总结。`
+      : `📌 **Key Points Summary**\n\nBased on "${preview}${text.length > 60 ? '...' : ''}", here are the main takeaways:\n\n1. **Main Topic**: The text discusses important concepts and trends related to artificial intelligence\n2. **Key Insight**: AI technology is moving from research labs into everyday life, transforming various fields\n3. **Critical Detail**: Privacy protection and data processing have become core concerns in AI adoption\n4. **Conclusion**: Future AI development will focus more on specialization and practical utility\n\n> 💡 This is a demo result. Configure your API key for real AI-powered summaries.`,
+    explain: isChinese
+      ? `🔍 **通俗解释**\n\n关于"${preview}${text.length > 60 ? '...' : ''}"这段内容，用人话来说就是：\n\n这段文字在讨论人工智能如何影响我们的日常生活。作者想表达的核心意思是，AI不再是科幻电影里的东西，而是实实在在出现在我们身边的工具——比如帮你管理日程、监测健康数据、个性化学习等等。\n\n简单打个比方：AI就像是一个隐形的助手，在你看不到的地方帮你处理各种信息，让你生活更方便。\n\n> 💡 这是演示模式生成的示例结果。配置API Key后可获得真实AI解释。`
+      : `🔍 **Plain Explanation**\n\nRegarding "${preview}${text.length > 60 ? '...' : ''}", here's what it means in simple terms:\n\nThis text is discussing how artificial intelligence affects our daily lives. The author is saying that AI is no longer just something from sci-fi movies — it's a real tool that's all around us, helping with calendar management, health monitoring, personalized learning, and more.\n\nThink of it this way: AI is like an invisible assistant that handles information in the background, making your life easier without you even noticing.\n\n> 💡 This is a demo result. Configure your API key for real AI-powered explanations.`,
+    translate: isChinese
+      ? `🌐 **中文翻译**\n\n${text}\n\n---\n\n> 💡 这是演示模式的直译结果。配置API Key后可获得更自然、更准确的AI翻译。`
+      : `🌐 **English Translation**\n\n${text}\n\n---\n\n> 💡 This is a demo result showing the original text. Configure your API key for real AI translations.`,
+  };
+
+  return responses[action] || responses.summarize;
 }
 
 function buildPrompt(text, action, language) {
@@ -143,6 +173,7 @@ const DEFAULT_SETTINGS = {
   apiKey: '',
   language: 'zh-CN',
   isOwnKey: false,
+  demoMode: false,
 };
 
 async function getSettings() {

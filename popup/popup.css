@@ -66,6 +66,11 @@ header h1 {
   background: #f87171;
 }
 
+.status-dot.demo {
+  background: #fbbf24;
+  box-shadow: 0 0 6px rgba(251, 191, 36, 0.5);
+}
+
 #statusText {
   font-size: 13px;
   font-weight: 500;
@@ -163,6 +168,14 @@ header h1 {
 
 .guide-option a:hover {
   text-decoration: underline;
+}
+
+/* Demo mode checkbox */
+.form-group label input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+  vertical-align: middle;
+  accent-color: #667eea;
 }
 
 /* Settings */
