@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Promo Image Generator</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; padding: 20px; }
+    canvas { border: 1px solid #ddd; margin: 10px; }
+    p { color: #666; margin: 4px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <h2>AI Reading Assistant — Promotional Images</h2>
+  <p>Right-click each image → "Save image as..."</p>
+  <div id="output"></div>
+  <script>
+    const sizes = [
+      { name: 'small_tile', w: 440, h: 280, label: 'Small promo tile 440×280' },
+      { name: 'large_tile', w: 920, h: 680, label: 'Large promo tile 920×680' },
+      { name: 'marquee', w: 1400, h: 560, label: 'Marquee 1400×560' },
+    ];
+
+    function draw(canvas, w, h) {
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+
+      // Gradient background
+      const gradient = ctx.createLinearGradient(0, 0, w, h);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(0.5, '#7c5cbf');
+      gradient.addColorStop(1, '#764ba2');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, w, h);
+
+      // Subtle pattern
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      const scale = w / 440;
+      for (let x = 0; x < w; x += 60 * scale) {
+        for (let y = 0; y < h; y += 60 * scale) {
+          ctx.beginPath();
+          ctx.arc(x, y, 2 * scale, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Icon circle
+      const iconSize = w < 600 ? 64 : 96;
+      const iconX = w / 2;
+      const iconY = h * 0.35;
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.beginPath();
+      ctx.arc(iconX, iconY, iconSize / 2 + 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Icon (✨ emoji as text)
+      ctx.font = `${iconSize}px serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('📖', iconX, iconY + 2);
+
+      // Title
+      ctx.fillStyle = '#ffffff';
+      const titleSize = w < 600 ? 28 : 40;
+      ctx.font = `bold ${titleSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText('AI Reading Assistant', w / 2, h * 0.62);
+
+      // Subtitle
+      ctx.fillStyle = 'rgba(255,255,255,0.85)';
+      const subSize = w < 600 ? 15 : 20;
+      ctx.font = `${subSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+      ctx.fillText('Summarize · Explain · Translate — right on any webpage', w / 2, h * 0.62 + subSize + 12);
+
+      // Badge
+      const badgeY = h * 0.85;
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      const badgeW = w < 600 ? 160 : 220;
+      const badgeH = w < 600 ? 36 : 48;
+      ctx.beginPath();
+      roundRect(ctx, w / 2 - badgeW / 2, badgeY - badgeH / 2, badgeW, badgeH, badgeH / 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = `bold ${w < 600 ? 14 : 17}px -apple-system, BlinkMacSystemFont, sans-serif`;
+      ctx.fillText('Free · No sign-up · Privacy-first', w / 2, badgeY);
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    sizes.forEach(({ name, w, h, label }) => {
+      const p = document.createElement('p');
+      p.textContent = label;
+      const canvas = document.createElement('canvas');
+
+      // Scale down large sizes for preview
+      const scale = w > 600 ? 0.5 : 1;
+      canvas.style.width = `${w * scale}px`;
+      canvas.style.height = `${h * scale}px`;
+
+      draw(canvas, w, h);
+      document.getElementById('output').appendChild(p);
+      document.getElementById('output').appendChild(canvas);
+    });
+  </script>
+</body>
+</html>

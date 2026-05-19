@@ -81,10 +81,6 @@
     if (!text) return;
 
     isProcessing = true;
-    hideFloatingBtn();
-
-    // Clear previous selection highlight
-    sel.removeAllRanges();
 
     showResultCard(action, 'loading');
 
