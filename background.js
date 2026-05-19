@@ -75,6 +75,8 @@ async function handleAiAction(text, action) {
 
   if (settings.provider === 'claude') {
     result = await callClaude(settings.apiKey, prompt);
+  } else if (settings.provider === 'deepseek') {
+    result = await callDeepSeek(settings.apiKey, prompt);
   } else {
     result = await callOpenAI(settings.apiKey, prompt);
   }
@@ -138,6 +140,31 @@ async function callOpenAI(apiKey, prompt) {
   if (!res.ok) {
     const err = await res.json().catch(() => ({}));
     throw new Error(err.error?.message || `OpenAI API 错误: ${res.status}`);
+  }
+  const data = await res.json();
+  return data.choices[0].message.content;
+}
+
+async function callDeepSeek(apiKey, prompt) {
+  const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [
+        { role: 'system', content: '你是一个阅读助手。回答简洁、清晰、有条理。' },
+        { role: 'user', content: prompt },
+      ],
+      max_tokens: 800,
+      temperature: 0.3,
+    }),
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error?.message || `DeepSeek API 错误: ${res.status}`);
   }
   const data = await res.json();
   return data.choices[0].message.content;
