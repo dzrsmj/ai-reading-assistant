@@ -171,11 +171,10 @@
 
   function removeResultCard() {
     if (resultCard) {
-      resultCard.classList.remove('visible');
-      setTimeout(() => {
-        if (resultCard) resultCard.remove();
-        resultCard = null;
-      }, 200);
+      const card = resultCard;
+      resultCard = null;
+      card.classList.remove('visible');
+      setTimeout(() => card.remove(), 200);
     }
   }
 
@@ -189,11 +188,12 @@
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg.type === 'SHOW_RESULT') {
       const { text, action, result } = msg.payload;
-      // Clear any existing selection
+      hideFloatingBtn();
       window.getSelection().removeAllRanges();
       showResultCard(action, 'result', result, text);
     }
     if (msg.type === 'SHOW_ERROR') {
+      hideFloatingBtn();
       showResultCard('summarize', 'error', msg.payload.message);
     }
   });
